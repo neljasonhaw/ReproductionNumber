@@ -1,0 +1,23 @@
+---
+title: "Reproduction Number Code"
+author: "Creatd by Nel Jason Haw"
+date: "Last updated November 14, 2020"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load packages in the library
+First, we load the following packages in our library: `tidyverse`, `janitor`, `R0`, and `writexl`
+
+```{r library, message = FALSE}
+library(tidyverse)      # General data analysis package
+library(janitor)        # General data cleaning package
+library(R0)             # Reproduction number
+library(writexl)        # Export to Excel spreadsheet
+```
+
+## Working directory
+Ideally, we should also be setting a working directory. This working directory will contain all the input and output files used by the analysis so that we do not have to keep referencing the entire directory every time we need to import or export files.
