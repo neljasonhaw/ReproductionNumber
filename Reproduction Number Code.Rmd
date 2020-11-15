@@ -181,7 +181,7 @@ Note that the `R0` package has multiple methods available, but for this guide, w
 
 Note that depending on the computational capacity of your computer, this takes some time. Be patient.
 
-```{r rt, cache = TRUE}
+```{r rt, cache = TRUE, message = FALSE}
 Rt <- estimate.R(epid = incidencetable_subset$Count, t = incidencetable_subset$Date, 
                  GT=mGT, method="TD", begin="2020-06-15", end="2020-11-01")
 # epid declares the incidence counts
@@ -249,7 +249,7 @@ write.csv(incidencetable_C, "incidencetable_C.csv")                   # Export i
 
 Using the same serial interval distribution and method of estimation, you may calculate the reproduction numbers.
 
-```{r rt_C, cache = TRUE}
+```{r rt_C, cache = TRUE, message = FALSE}
 Rt_C <- estimate.R(epid = incidencetable_C$Count, t = incidencetable_C$Date, 
                    GT=mGT, method="TD", begin="2020-06-15", end="2020-10-25")
 ```
