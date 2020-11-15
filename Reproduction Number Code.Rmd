@@ -1,23 +1,142 @@
 ---
 title: "Reproduction Number Code"
-author: "Creatd by Nel Jason Haw"
+author: "Created by Nel Jason Haw"
 date: "Last updated November 14, 2020"
-output: html_document
+output: 
+  html_document: 
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    theme: cosmo
 ---
-
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Load packages in the library
-First, we load the following packages in our library: `tidyverse`, `janitor`, `R0`, and `writexl`
 
 ```{r library, message = FALSE}
 library(tidyverse)      # General data analysis package
 library(janitor)        # General data cleaning package
 library(R0)             # Reproduction number
+library(incidence)      # Generating incidence tables
 library(writexl)        # Export to Excel spreadsheet
 ```
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<br>
+
+This page gives you step-by-step instructions on how to calculate reproduction number using surveillance data from an infectious disease outbreak.
+
+Before starting in this page, please visit the [**README file**](https://neljasonhaw.github.io/ReproductionNumber). There are instructions for beginners on how to install R and RStudio, getting familiar with R, an introduction to tidy data, and what R packages to install (installing packages only needs to be done once).
+
+<br>
+
+# Data Preparation
+
+## Tidy data needed {.tabset}
+Before starting to code, make sure that the tidy data version of your surveillance data is already available on your local computer. 
+
+There are two types of tidy data that you may load. Choose from any of the tabs below.
+
+<br>
+
+### Line list of cases
+This is recommended if you are able to clean the raw data into tidy data using R. Raw data cleaning is highly dependent on the raw data you have, so if you are not yet familiar with it, clean the data elsewhere first.
+
+If you are using a line list of cases, the following are the minimum variables you need:
+
+* **`ID`**: Unique, static ID number that identifies each case
+* **`DateOnset`**: Date of symptom onset as reported by the case - often, symptom onset data is not complete and is imputed in many ways, such as using the date of testing (**`DateTested`**) and date of reporting (**`DateReported`**) instead
+  * The imputation methods are highly dependent on the decisions made by the surveillance team. This page will not make any prescriptions on what the appropriate method is.
+  * Make sure to include all other variables that may be needed to impute the `DateOnset` variable, or if there is already a variable available with the imputed values, just use that one instead as `DateOnset`
+* Any other variables that may be used to stratify the data: If you want to generate reproduction numbers per municipality (**`Municipality`**), for example, then retrieve the municipality variable as well.
+
+In line with tidy data principles, make sure that any categorical variable has clean values (no typographical errors, no different versions of the same category), and that all date variables have a uniform format. **I recommend using the date format "YYYY-MM-DD".**
+
+You may download the dummy data spreadsheet used for this demonstration in the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `**Code**` then click `Download ZIP`. Unzip and look for the file name **linelist.csv**.
+
+We will simulate two activities together with the calculation of the reproduction number with the dummy data:
+
+* Imputation of `DateOnset` variable with a simple rule: If `DateOnset` is missing, then use `DateTested` minus 2 days; if both `DateOnset` and `DateTested`are missing, then use `DateReport` minus 4 days
+* Stratify the analysis by the `Municipality` variable
+
+While this file may usually be found in your Downloads folder, move it to a new folder where this tidy data file will be found. This will serve as our working directory for the rest of this guide.
+
+The first six rows of linelist.csv should look something like this:
+```{r head_linelistcsv, echo = FALSE}
+linelist <- read.csv("linelist.csv")        # Importing the linelist.csv file
+head(linelist)                              # Displaying the first six rows of linelist
+```
+
+**Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option "CSV (Macintosh)." The other CSV file types do not render properly in R.**
+
+<br>
+
+### Incidence table
+If you are more comfortable cleaning and processing data elsewhere, and just need R to do the analysis for you, we can skip to the part where the incidence table is already generated. An incidence table has two **necessary** columns: **`DateOnset`** (imputed or otherwise) and **`Count`**
+
+* **`DateOnset`**: Date of symptom onset as reported by the case - often, symptom onset data is not complete and is imputed in many ways, such as using the date of testing (**`DateTested`**) and date of reporting (**`DateReported`**) instead
+  * The imputation methods are highly dependent on the decisions made by the surveillance team. This page will not make any prescriptions on what the appropriate method is.
+  * Make sure to include all other variables that may be needed to impute the `DateOnset` variable, or if there is already a variable available with the imputed values, just use that one instead as `DateOnset`
+* **`Count`**: The number of new cases on that particular date. This should be a discrete variable, meaning there should only be positive integers, since we are counting people.
+* If you have any other variables that may be used to stratify the data, such as generating reproduction numbers per municipality (**`Municipality`**), for example, then retrieve the municipality variable as well.
+
+**IMPORTANT: The incidence table must have each date as a row between two time periods. This means that dates with zero cases should display as zero counts.
+
+In line with tidy data principles, make sure that the date variable has a uniform format. **I recommend using the date format "YYYY-MM-DD".**
+
+You may download the dummy data spreadsheet used for this demonstration in the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `**Code**` then click `Download ZIP`. Unzip and look for the file name **incidencetable.csv**.
+
+We will simulate two activities together with the calculation of the reproduction number with the dummy data:
+
+* Imputation of `DateOnset` variable with a simple rule: If `DateOnset` is missing, then use `DateTested` minus 2 days; if both `DateOnset` and `DateTested`are missing, then use `DateReport` minus 4 days
+* Stratify the analysis by the `Municipality` variable
+
+While this file may usually be found in your Downloads folder, move it to a new folder where this tidy data file will be found. This will serve as our working directory for the rest of this guide.
+
+The first six rows of incidencetable.csv should look something like this:
+```{r head_incidencetablecsv, echo = FALSE}
+linelist <- read.csv("linelist.csv")                          # Importing the linelist.csv file
+linelist$DateOnset <- as.Date(linelist$DateOnset, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
+linelist$DateTested <- as.Date(linelist$DateTested, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
+linelist$DateReported <- as.Date(linelist$DateReported, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
+linelist <- linelist %>% mutate(DateOnset_imputed = case_when(is.na(DateOnset) & !is.na(DateTested) ~ DateTested - 2,
+                                                              is.na(DateOnset) & is.na(DateTested) ~ DateReported - 4,
+                                                              TRUE ~ DateOnset))        # Imputation algorithm
+incidence <- incidence(linelist$DateOnset_imputed)       # Generate incidence table as incidence object
+incidencetable <- data.frame(incidence$dates, incidence$counts)    # Generate incidence table as dataframe
+colnames(incidencetable) <- c("DateOnset", "Count")     # Rename columns
+head(incidencetable)
+write.csv(incidencetable, "incidencetable.csv")
+```
+
+<br>
+
+
+
+
+
+
+
+
+You may download the dummy data spreadsheet used for this demonstration at <URL> with the file name. Make sure to have a new folder in your computer where this tidy data file will be found. This will serve as our local directory.
+
+
+
+
+
+
+
+## Setting the local directory and opening a new R project
+1. Open RStudio. On the menu bar, click `File` > `New Project...`
+2. The `New Project Wizard` dialog box opens. click on `Existing Directory`. 
+3. Under `Project working directory`, click `Browse...` and locate the folder of the local directory. If you want to be safe, just create a new folder on your Documents folder, e.g. "C:/Users/user/Documents/Demo" if you had named your local directory "Demo."
+4. Click `Create Project.` At this point, you have created a new project file (.Rproj) as well as set the local directory. This local directory will contain all the files that will be imported and exported as part of this analysis.
+5. Create a new R script file using the keyboard shortcut `Ctrl-Shift-N` or going to `File` > `New File` > `R Script` or clicking on the New File button on the topmost left corner right below the menu bar then clicking `R Script`. The left side of the environment should split into two - with the script file found on the upper left side. The script file is similar to a do file for those who are familiar with Stata. Ideally, we should be saving all our code in a script file in case we need to redo or repeat analyses so that all we have to do is to run the script rather than coding everything from scratch again.
+
+**All the code that you see moving forward should be typed on your R script in sequence.**
+
+## Load packages in the library
+First, we load the following packages in our library: `tidyverse`, `janitor`, `R0`, and `writexl`
+
+
 ## Working directory
-Ideally, we should also be setting a working directory. This working directory will contain all the input and output files used by the analysis so that we do not have to keep referencing the entire directory every time we need to import or export files.
+
