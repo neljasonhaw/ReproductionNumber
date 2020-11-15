@@ -93,4 +93,4 @@ To install packages for the first time, go to the `Console` window (bottom right
 
 When prompted for a server, choose the server nearest to your current location for the fastest possible download. You will know when any command in R is done running when you see the `>` symbol show up on the bottommost part of the `Console` window again.
 
-The actual commands for estimating reproduction number will be in the ![Reproduction Number Code](https://neljasonhaw.github.io/ReproductionNumber/Reproduction-Number-Code.html) file within this repository.
+The actual commands for estimating reproduction number will be in the ![Reproduction Number Code](Reproduction-Number-Code.html) file within this repository.
