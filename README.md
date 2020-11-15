@@ -5,7 +5,7 @@ A guide for estimating reproduction number targeted towards epidemiologists with
 * Do not have access to proprietary statistical software such as SAS and Stata
 * Do not have any background in any statistical programming language
 * Understand the calculation behind reproduction number but do not know how to execute the calculation programmatically
-  * If you wish to learn more about the **theory behind the reproduction number**, please refer to the following reference: Annunziato A. and Asikainen T. (2020). *Effective Reproduction Number Estimation from Data Series*. European Commission Joint Research Centre Technical Report. https://publications.jrc.ec.europa.eu/repository/bitstream/JRC121343/r0_technical_note_v3.4.pdf
+  * If you wish to learn more about the **theory behind the reproduction number**, please refer to the following reference: [Annunziato A. and Asikainen T. (2020). *Effective Reproduction Number Estimation from Data Series*. European Commission Joint Research Centre Technical Report.](https://publications.jrc.ec.europa.eu/repository/bitstream/JRC121343/r0_technical_note_v3.4.pdf)
 * Work collaboratively in the context of an ongoing infectious disease outbreak
 
 ## Getting started with R
@@ -40,6 +40,7 @@ This raw data file:
 We should split the data into two tables: one where each row is a case, another where each row is a test. The two tables are linked by a common, static ID. A tidy data version of the file above could look something like this instead:
 
 The first table (each row = confirmed case)
+
 | ID   | DateOnset  | Municipality | Community      | DateReport |
 | ---: | ---:       | :---         | :---           | --:        |
 | 1    | 2020-09-27 | Funky Town   | Highland Z     | 2020-10-01 |
@@ -49,6 +50,7 @@ The first table (each row = confirmed case)
 | 5    | 2020-09-30 | New Horizons | Block A1       | 2020-10-02 |
 
 The second table (each row = test)
+
 | ID   | DateTest   | Result   |
 | ---: | ---:       | :---     |
 | 1    | 2020-09-30 | Positive |
