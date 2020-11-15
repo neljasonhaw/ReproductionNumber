@@ -201,18 +201,18 @@ code span.ot { color: #007020; }
 <div class="toc-box">
 <ul>
 <li><a href="#getting-ready"><span class="toc-section-number">1</span> Getting Ready</a><ul>
-<li><a href="#download-dummy-data-if-you-wanna-follow-along-completely"><span class="toc-section-number">1.1</span> Download dummy data (if you wanna follow along completely)</a></li>
+<li><a href="#downloading-dummy-data-if-you-wanna-follow-along-completely"><span class="toc-section-number">1.1</span> Downloading dummy data (if you wanna follow along completely)</a></li>
 <li><a href="#creating-an-rstudio-project"><span class="toc-section-number">1.2</span> Creating an RStudio project</a></li>
-<li><a href="#installing-packages"><span class="toc-section-number">1.3</span> Installing packages</a></li>
+<li><a href="#loading-packages"><span class="toc-section-number">1.3</span> Loading packages</a></li>
 </ul></li>
 <li><a href="#data-preparation"><span class="toc-section-number">2</span> Data Preparation</a><ul>
 <li><a href="#tidy-data-linelist"><span class="toc-section-number">2.1</span> Tidy data: linelist</a></li>
-<li><a href="#incidence-table"><span class="toc-section-number">2.2</span> Incidence table</a></li>
+<li><a href="#generating-incidence-table"><span class="toc-section-number">2.2</span> Generating incidence table</a></li>
 </ul></li>
 <li><a href="#estimating-reproduction-number"><span class="toc-section-number">3</span> Estimating Reproduction Number</a><ul>
 <li><a href="#declaring-serial-interval-distribution"><span class="toc-section-number">3.1</span> Declaring serial interval distribution</a></li>
 <li><a href="#choosing-an-appropriate-time-period-for-the-analysis"><span class="toc-section-number">3.2</span> Choosing an appropriate time period for the analysis</a></li>
-<li><a href="#plot-reproduction-number-curve"><span class="toc-section-number">3.3</span> Plot reproduction number curve</a></li>
+<li><a href="#plotting-reproduction-number-curve"><span class="toc-section-number">3.3</span> Plotting reproduction number curve</a></li>
 <li><a href="#conducting-subanalyses"><span class="toc-section-number">3.4</span> Conducting subanalyses</a></li>
 </ul></li>
 </ul>
@@ -226,8 +226,8 @@ code span.ot { color: #007020; }
 <p><br></p>
 <div id="getting-ready" class="section level1">
 <h1><span class="header-section-number">1</span> Getting Ready</h1>
-<div id="download-dummy-data-if-you-wanna-follow-along-completely" class="section level2">
-<h2><span class="header-section-number">1.1</span> Download dummy data (if you wanna follow along completely)</h2>
+<div id="downloading-dummy-data-if-you-wanna-follow-along-completely" class="section level2">
+<h2><span class="header-section-number">1.1</span> Downloading dummy data (if you wanna follow along completely)</h2>
 <p>The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the <a href="https://github.com/neljasonhaw/ReproductionNumber"><strong>Github repository here</strong></a>. Click on the green button <code>Code</code> then click <code>Download ZIP</code>. Unzip and look for the file name <code>linelist.csv</code>. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.</p>
 <p>While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.</p>
 <p><br></p>
@@ -243,9 +243,9 @@ code span.ot { color: #007020; }
 </ol>
 <p><br></p>
 </div>
-<div id="installing-packages" class="section level2">
-<h2><span class="header-section-number">1.3</span> Installing packages</h2>
-<p>We will need to install the relevant R packages first. On the script file you just created, type the following chunk of code:</p>
+<div id="loading-packages" class="section level2">
+<h2><span class="header-section-number">1.3</span> Loading packages</h2>
+<p>We will need to load the relevant R packages first. Make sure that the packages are installed prior to loading them. On the script file you just created, type the following chunk of code:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyverse)      <span class="co"># General data analysis package</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(janitor)        <span class="co"># General data cleaning package</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(R0)             <span class="co"># Reproduction number</span></span>
@@ -299,8 +299,8 @@ code span.ot { color: #007020; }
 <pre><code>## [1] 0</code></pre>
 <p><br></p>
 </div>
-<div id="incidence-table" class="section level2">
-<h2><span class="header-section-number">2.2</span> Incidence table</h2>
+<div id="generating-incidence-table" class="section level2">
+<h2><span class="header-section-number">2.2</span> Generating incidence table</h2>
 <p>Now that we have our imputed dates of symptom onset, we are ready to generate incidence tables. An incidence table is just a frequency table with each row representing a calendar date, together with the count of cases for that date.</p>
 <p><strong>IMPORTANT: The incidence table must have each date PER DAY as a row between two time periods. This means that dates with zero cases should display as dates with zero counts. If you chose to generate an incidence table elsewhere, say, using the PivotTable command in Excel, or even through the <code>table</code> command in R, the reproduction number calculation will not work.</strong></p>
 <ul>
@@ -359,8 +359,8 @@ code span.ot { color: #007020; }
 <span id="cb12-2"><a href="#cb12-2"></a><span class="co"># %&gt;% is a pipe filter in the dplyr package that makes coding more readable</span></span></code></pre></div>
 <p><br></p>
 </div>
-<div id="plot-reproduction-number-curve" class="section level2">
-<h2><span class="header-section-number">3.3</span> Plot reproduction number curve</h2>
+<div id="plotting-reproduction-number-curve" class="section level2">
+<h2><span class="header-section-number">3.3</span> Plotting reproduction number curve</h2>
 <p>And finally, we are ready to calculate the reproduction number. You will store the results in an object called <code>Rt</code></p>
 <p>Note that the <code>R0</code> package has multiple methods available, but for this guide, we will use the <a href="https://academic.oup.com/aje/article/160/6/509/79472">Wallinga and Teunis (2004) method</a>.</p>
 <p>Note that depending on the computational capacity of your computer, this takes some time. Be patient.</p>
