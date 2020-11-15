@@ -3,14 +3,15 @@ title: "Reproduction Number Code"
 author: "Created by Nel Jason Haw"
 date: "Last updated November 14, 2020"
 output: 
-  html_document: 
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
     toc: true
     toc_depth: 2
     number_sections: true
-    theme: cosmo
 ---
 
-```{r library, message = FALSE}
+```{r library, include = FALSE}
 library(tidyverse)      # General data analysis package
 library(janitor)        # General data cleaning package
 library(R0)             # Reproduction number
