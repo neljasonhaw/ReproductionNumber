@@ -171,10 +171,10 @@ Let's try to simulate this exercise with our dummy data. **Note that any of the 
 First, let's visualize an epidemic curve where each bar covers seven days.
 ```{r epicurve}
 ggplot(linelist, aes(x = DateOnset_imputed)) +      # Call data
+       # Indicate visualization is histogram with bin width 7 days, custom colors
        geom_histogram(binwidth = 7, fill = "#156A86", color = "black") +
-            # Indicate visualization is histogram with bin width 7 days, custom colors
+       # Renaming x and y axis labels
        xlab("Date of Symptom Onset (imputed)") + ylab("Number of Cases")
-            # Renaming x and y axis labels
 ```
 
 Based on the epidemic curve, it seems like a reasonable starting point for the time period of the analysis is two weeks before the start of July (say, June 15, which is a Monday), and a reasonable end point is the last week of October (say, November 1, which is a Sunday)
@@ -254,10 +254,10 @@ All you have to do is to filter the data first, then repeat the steps above on i
 # Filter all cases from Municipality C
 linelist_C <- linelist %>% filter(Municipality == "Municipality C")
 ggplot(linelist_C, aes(x = DateOnset_imputed)) +                  # Call data
+       # Indicate visualizaiton is histogram with bin width 7 days, custom colors
        geom_histogram(binwidth = 7, fill = "#156A86", color = "black") +  
-              # Indicate visualizaiton is histogram with bin width 7 days, custom colors
+       # Renaming x and y axis labels
        xlab("Date of Symptom Onset (imputed)") + ylab("Number of Cases")
-              # Renaming x and y axis labels
 ```
 
 Based on the epidemic curve, it seems like a reasonable starting point for the time period of the analysis is the start of July (say, July 6, which is a Monday), and a reasonable end point is the last week of October (say, October 25, which is a Sunday)
@@ -301,9 +301,10 @@ write_xlsx(Rt_C_table, "Rt_C_table.xlsx")
 
 You may also plot the reproduction number curve. By default you can just use the command `plot(Rt)` but if you want to add some color, use `ggplot` instead and store the graph in an object called `rt_plot`
 ```{r C_curve}
-rt_C_plot <- ggplot(Rt_C_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", lwd = 2) +   
-                    geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
-                    xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
+rt_C_plot <- 
+  ggplot(Rt_C_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", lwd = 2) +   
+         geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
+         xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
 rt_C_plot
 ggsave(file="rt_plot_C.png", rt_plot, width = 160, height = 90, unit = "mm")
 ```
