@@ -7,11 +7,42 @@ output:
     theme: cayman
     highlight: github
     toc: true
-    toc_depth: 2
+    toc_depth: 3
     number_sections: true
 ---
 
-```{r library, include = FALSE}
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<br>
+
+This page gives you a step-by-step instruction guide on how to calculate reproduction number using surveillance data from an infectious disease outbreak.
+
+Before starting in this page, please visit the [**README file**](https://neljasonhaw.github.io/ReproductionNumber). There are instructions for beginners on how to install R and RStudio, getting familiar with R, an introduction to tidy data, and what R packages to install (installing packages only needs to be done once).
+
+<br>
+
+# Getting Ready
+
+## Download Dummy Data (if you wanna follow along completely)
+The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button **Code** then click `Download ZIP`. Unzip and look for the file name **linelist.csv**. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
+
+While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.
+
+<br>
+
+## Creating an R Studio Project
+1. Open RStudio. On the menu bar, click `File` > `New Project...`
+2. The `New Project Wizard` dialog box opens. click on `Existing Directory`. 
+3. Under `Project working directory`, click `Browse...` and locate the folder of the working directory.
+4. Click `Create Project.` At this point, you have created a new project file (.Rproj) as well as set the working directory.
+5. Create a new R script file using the keyboard shortcut `Ctrl-Shift-N` or going to `File` > `New File` > `R Script` or clicking on the New File button on the topmost left corner right below the menu bar then clicking `R Script`. The left side of the environment should split into two - with the script file found on the upper left side. The script file is similar to a do file for those who are familiar with Stata. Ideally, we should be saving all our code in a script file in case we need to redo or repeat analyses so that all we have to do is to run the script rather than coding everything from scratch again.
+
+<br>
+
+## Installing Packages
+We will need to install the relevant R packages first. On the script file you just created, type the following chunk of code:
+```{r library, message = FALSE}
 library(tidyverse)      # General data analysis package
 library(janitor)        # General data cleaning package
 library(R0)             # Reproduction number
@@ -19,53 +50,43 @@ library(incidence)      # Generating incidence tables
 library(writexl)        # Export to Excel spreadsheet
 ```
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+You can opt to skip the characters beginning from the # sign - Anything written with the # sign are comments. I would recommend you keeping them so that you won't forget what each line of code means.
+
+Now, highlight the five lines of code on your script file, then click the `Run` button on the upper right portion of the `Script` window. Alternatively, you can also use the keyboard shortcut `Ctrl-Enter` to run the code. The codes should appear on the `Console` window on the lower left. Moving forward, whenever we want to run a chunk of code one at a time, we highlight the code we want to run, then we either click the `Run` button or enter `Ctrl-Enter`. Stata users will find this workflow very familiar, as this is the same that's done with do files.
+
 <br>
-
-This page gives you step-by-step instructions on how to calculate reproduction number using surveillance data from an infectious disease outbreak.
-
-Before starting in this page, please visit the [**README file**](https://neljasonhaw.github.io/ReproductionNumber). There are instructions for beginners on how to install R and RStudio, getting familiar with R, an introduction to tidy data, and what R packages to install (installing packages only needs to be done once).
-
 <br>
 
 # Data Preparation
 
-## Tidy data needed {.tabset}
-Before starting to code, make sure that the tidy data version of your surveillance data is already available on your local computer. 
+## Tidy Data: Linelist
+Before starting to code, make sure that the tidy data version of your surveillance data is already available on your working directory. For those who want to follow along with dummy data, we have already done this. For those who want to use their own line list of cases, make sure you have done it at this point and rename the file as `linelist.csv` so that you don't have to change anything in the codes below.
 
-There are two types of tidy data that you may load. Choose from any of the tabs below.
+Raw data cleaning is highly dependent on the raw data you have, so if you are not yet familiar with data cleaning using R, clean the data elsewhere first. This guide will not teach you how to clean the data, although this arguably takes majority of one's time when doing data analysis.
 
-<br>
-
-### Line list of cases
-This is recommended if you are able to clean the raw data into tidy data using R. Raw data cleaning is highly dependent on the raw data you have, so if you are not yet familiar with it, clean the data elsewhere first.
-
-If you are using a line list of cases, the following are the minimum variables you need:
+The line list, at the minimum, should contain the following columns:
 
 * **`ID`**: Unique, static ID number that identifies each case
 * **`DateOnset`**: Date of symptom onset as reported by the case - often, symptom onset data is not complete and is imputed in many ways, such as using the date of testing (**`DateTested`**) and date of reporting (**`DateReported`**) instead
-  * The imputation methods are highly dependent on the decisions made by the surveillance team. This page will not make any prescriptions on what the appropriate method is.
+  * The imputation methods are highly dependent on the decisions made by the surveillance team. This guide will not make any prescriptions on what the appropriate method is.
   * Make sure to include all other variables that may be needed to impute the `DateOnset` variable, or if there is already a variable available with the imputed values, just use that one instead as `DateOnset`
 * Any other variables that may be used to stratify the data: If you want to generate reproduction numbers per municipality (**`Municipality`**), for example, then retrieve the municipality variable as well.
 
 In line with tidy data principles, make sure that any categorical variable has clean values (no typographical errors, no different versions of the same category), and that all date variables have a uniform format. **I recommend using the date format "YYYY-MM-DD".**
 
-You may download the dummy data spreadsheet used for this demonstration in the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `**Code**` then click `Download ZIP`. Unzip and look for the file name **linelist.csv**.
+For those using their own data, I would recommend to rename your columns to the column names above so that you don't have to change anything in the codes below.
+
+First, let's take a look at the dummy data quickly. Run the following lines of code and a table showing the first six rows should appear on the `Console`:
+```{r head_linelistcsv}
+linelist <- read.csv("linelist.csv")        # Importing the linelist.csv file
+head(linelist)                              # Displaying the first six rows of linelist
+```
 
 We will simulate two activities together with the calculation of the reproduction number with the dummy data:
 
 * Imputation of `DateOnset` variable with a simple rule: If `DateOnset` is missing, then use `DateTested` minus 2 days; if both `DateOnset` and `DateTested`are missing, then use `DateReport` minus 4 days
 * Stratify the analysis by the `Municipality` variable
 
-While this file may usually be found in your Downloads folder, move it to a new folder where this tidy data file will be found. This will serve as our working directory for the rest of this guide.
-
-The first six rows of linelist.csv should look something like this:
-```{r head_linelistcsv, echo = FALSE}
-linelist <- read.csv("linelist.csv")        # Importing the linelist.csv file
-head(linelist)                              # Displaying the first six rows of linelist
-```
 
 **Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option "CSV (Macintosh)." The other CSV file types do not render properly in R.**
 
@@ -126,12 +147,7 @@ You may download the dummy data spreadsheet used for this demonstration at <URL>
 
 
 
-## Setting the local directory and opening a new R project
-1. Open RStudio. On the menu bar, click `File` > `New Project...`
-2. The `New Project Wizard` dialog box opens. click on `Existing Directory`. 
-3. Under `Project working directory`, click `Browse...` and locate the folder of the local directory. If you want to be safe, just create a new folder on your Documents folder, e.g. "C:/Users/user/Documents/Demo" if you had named your local directory "Demo."
-4. Click `Create Project.` At this point, you have created a new project file (.Rproj) as well as set the local directory. This local directory will contain all the files that will be imported and exported as part of this analysis.
-5. Create a new R script file using the keyboard shortcut `Ctrl-Shift-N` or going to `File` > `New File` > `R Script` or clicking on the New File button on the topmost left corner right below the menu bar then clicking `R Script`. The left side of the environment should split into two - with the script file found on the upper left side. The script file is similar to a do file for those who are familiar with Stata. Ideally, we should be saving all our code in a script file in case we need to redo or repeat analyses so that all we have to do is to run the script rather than coding everything from scratch again.
+
 
 **All the code that you see moving forward should be typed on your R script in sequence.**
 

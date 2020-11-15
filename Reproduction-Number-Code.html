@@ -72,6 +72,99 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+/* A workaround for https://github.com/jgm/pandoc/issues/4278 */
+a.sourceLine {
+  pointer-events: auto;
+}
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -107,11 +200,17 @@ code span.ot { color: #007020; }
 <div id="TOC" class="toc">
 <div class="toc-box">
 <ul>
-<li><a href="#data-preparation"><span class="toc-section-number">1</span> Data Preparation</a><ul>
-<li><a href="#tidy-data-needed"><span class="toc-section-number">1.1</span> Tidy data needed</a></li>
-<li><a href="#setting-the-local-directory-and-opening-a-new-r-project"><span class="toc-section-number">1.2</span> Setting the local directory and opening a new R project</a></li>
-<li><a href="#load-packages-in-the-library"><span class="toc-section-number">1.3</span> Load packages in the library</a></li>
-<li><a href="#working-directory"><span class="toc-section-number">1.4</span> Working directory</a></li>
+<li><a href="#getting-ready"><span class="toc-section-number">1</span> Getting Ready</a><ul>
+<li><a href="#download-dummy-data-if-you-wanna-follow-along-completely"><span class="toc-section-number">1.1</span> Download Dummy Data (if you wanna follow along completely)</a></li>
+<li><a href="#creating-an-r-studio-project"><span class="toc-section-number">1.2</span> Creating an R Studio Project</a></li>
+<li><a href="#installing-packages"><span class="toc-section-number">1.3</span> Installing Packages</a></li>
+</ul></li>
+<li><a href="#data-preparation"><span class="toc-section-number">2</span> Data Preparation</a><ul>
+<li><a href="#tidy-data-linelist"><span class="toc-section-number">2.1</span> Tidy Data: Linelist</a><ul>
+<li><a href="#incidence-table"><span class="toc-section-number">2.1.1</span> Incidence table</a></li>
+</ul></li>
+<li><a href="#load-packages-in-the-library"><span class="toc-section-number">2.2</span> Load packages in the library</a></li>
+<li><a href="#working-directory"><span class="toc-section-number">2.3</span> Working directory</a></li>
 </ul></li>
 </ul>
 </div>
@@ -119,38 +218,62 @@ code span.ot { color: #007020; }
 
 <section class="main-content">
 <p><br></p>
-<p>This page gives you step-by-step instructions on how to calculate reproduction number using surveillance data from an infectious disease outbreak.</p>
+<p>This page gives you a step-by-step instruction guide on how to calculate reproduction number using surveillance data from an infectious disease outbreak.</p>
 <p>Before starting in this page, please visit the <a href="https://neljasonhaw.github.io/ReproductionNumber"><strong>README file</strong></a>. There are instructions for beginners on how to install R and RStudio, getting familiar with R, an introduction to tidy data, and what R packages to install (installing packages only needs to be done once).</p>
 <p><br></p>
-<div id="data-preparation" class="section level1">
-<h1><span class="header-section-number">1</span> Data Preparation</h1>
-<div id="tidy-data-needed" class="section level2 tabset">
-<h2><span class="header-section-number">1.1</span> Tidy data needed</h2>
-<p>Before starting to code, make sure that the tidy data version of your surveillance data is already available on your local computer.</p>
-<p>There are two types of tidy data that you may load. Choose from any of the tabs below.</p>
+<div id="getting-ready" class="section level1">
+<h1><span class="header-section-number">1</span> Getting Ready</h1>
+<div id="download-dummy-data-if-you-wanna-follow-along-completely" class="section level2">
+<h2><span class="header-section-number">1.1</span> Download Dummy Data (if you wanna follow along completely)</h2>
+<p>The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the <a href="https://github.com/neljasonhaw/ReproductionNumber"><strong>Github repository here</strong></a>. Click on the green button <strong>Code</strong> then click <code>Download ZIP</code>. Unzip and look for the file name <strong>linelist.csv</strong>. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.</p>
+<p>While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.</p>
 <p><br></p>
-<div id="line-list-of-cases" class="section level3">
-<h3><span class="header-section-number">1.1.1</span> Line list of cases</h3>
-<p>This is recommended if you are able to clean the raw data into tidy data using R. Raw data cleaning is highly dependent on the raw data you have, so if you are not yet familiar with it, clean the data elsewhere first.</p>
-<p>If you are using a line list of cases, the following are the minimum variables you need:</p>
+</div>
+<div id="creating-an-r-studio-project" class="section level2">
+<h2><span class="header-section-number">1.2</span> Creating an R Studio Project</h2>
+<ol style="list-style-type: decimal">
+<li>Open RStudio. On the menu bar, click <code>File</code> &gt; <code>New Project...</code></li>
+<li>The <code>New Project Wizard</code> dialog box opens. click on <code>Existing Directory</code>.</li>
+<li>Under <code>Project working directory</code>, click <code>Browse...</code> and locate the folder of the working directory.</li>
+<li>Click <code>Create Project.</code> At this point, you have created a new project file (.Rproj) as well as set the working directory.</li>
+<li>Create a new R script file using the keyboard shortcut <code>Ctrl-Shift-N</code> or going to <code>File</code> &gt; <code>New File</code> &gt; <code>R Script</code> or clicking on the New File button on the topmost left corner right below the menu bar then clicking <code>R Script</code>. The left side of the environment should split into two - with the script file found on the upper left side. The script file is similar to a do file for those who are familiar with Stata. Ideally, we should be saving all our code in a script file in case we need to redo or repeat analyses so that all we have to do is to run the script rather than coding everything from scratch again.</li>
+</ol>
+<p><br></p>
+</div>
+<div id="installing-packages" class="section level2">
+<h2><span class="header-section-number">1.3</span> Installing Packages</h2>
+<p>We will need to install the relevant R packages first. On the script file you just created, type the following chunk of code:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyverse)      <span class="co"># General data analysis package</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(janitor)        <span class="co"># General data cleaning package</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(R0)             <span class="co"># Reproduction number</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">library</span>(incidence)      <span class="co"># Generating incidence tables</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">library</span>(writexl)        <span class="co"># Export to Excel spreadsheet</span></span></code></pre></div>
+<p>You can opt to skip the characters beginning from the # sign - Anything written with the # sign are comments. I would recommend you keeping them so that you won’t forget what each line of code means.</p>
+<p>Now, highlight the five lines of code on your script file, then click the <code>Run</code> button on the upper right portion of the <code>Script</code> window. Alternatively, you can also use the keyboard shortcut <code>Ctrl-Enter</code> to run the code. The codes should appear on the <code>Console</code> window on the lower left. Moving forward, whenever we want to run a chunk of code one at a time, we highlight the code we want to run, then we either click the <code>Run</code> button or enter <code>Ctrl-Enter</code>. Stata users will find this workflow very familiar, as this is the same that’s done with do files.</p>
+<p><br> <br></p>
+</div>
+</div>
+<div id="data-preparation" class="section level1">
+<h1><span class="header-section-number">2</span> Data Preparation</h1>
+<div id="tidy-data-linelist" class="section level2">
+<h2><span class="header-section-number">2.1</span> Tidy Data: Linelist</h2>
+<p>Before starting to code, make sure that the tidy data version of your surveillance data is already available on your working directory. For those who want to follow along with dummy data, we have already done this. For those who want to use their own line list of cases, make sure you have done it at this point and rename the file as <code>linelist.csv</code> so that you don’t have to change anything in the codes below.</p>
+<p>Raw data cleaning is highly dependent on the raw data you have, so if you are not yet familiar with data cleaning using R, clean the data elsewhere first. This guide will not teach you how to clean the data, although this arguably takes majority of one’s time when doing data analysis.</p>
+<p>The line list, at the minimum, should contain the following columns:</p>
 <ul>
 <li><strong><code>ID</code></strong>: Unique, static ID number that identifies each case</li>
 <li><strong><code>DateOnset</code></strong>: Date of symptom onset as reported by the case - often, symptom onset data is not complete and is imputed in many ways, such as using the date of testing (<strong><code>DateTested</code></strong>) and date of reporting (<strong><code>DateReported</code></strong>) instead
 <ul>
-<li>The imputation methods are highly dependent on the decisions made by the surveillance team. This page will not make any prescriptions on what the appropriate method is.</li>
+<li>The imputation methods are highly dependent on the decisions made by the surveillance team. This guide will not make any prescriptions on what the appropriate method is.</li>
 <li>Make sure to include all other variables that may be needed to impute the <code>DateOnset</code> variable, or if there is already a variable available with the imputed values, just use that one instead as <code>DateOnset</code></li>
 </ul></li>
 <li>Any other variables that may be used to stratify the data: If you want to generate reproduction numbers per municipality (<strong><code>Municipality</code></strong>), for example, then retrieve the municipality variable as well.</li>
 </ul>
 <p>In line with tidy data principles, make sure that any categorical variable has clean values (no typographical errors, no different versions of the same category), and that all date variables have a uniform format. <strong>I recommend using the date format “YYYY-MM-DD”.</strong></p>
-<p>You may download the dummy data spreadsheet used for this demonstration in the <a href="https://github.com/neljasonhaw/ReproductionNumber"><strong>Github repository here</strong></a>. Click on the green button <code>**Code**</code> then click <code>Download ZIP</code>. Unzip and look for the file name <strong>linelist.csv</strong>.</p>
-<p>We will simulate two activities together with the calculation of the reproduction number with the dummy data:</p>
-<ul>
-<li>Imputation of <code>DateOnset</code> variable with a simple rule: If <code>DateOnset</code> is missing, then use <code>DateTested</code> minus 2 days; if both <code>DateOnset</code> and <code>DateTested</code>are missing, then use <code>DateReport</code> minus 4 days</li>
-<li>Stratify the analysis by the <code>Municipality</code> variable</li>
-</ul>
-<p>While this file may usually be found in your Downloads folder, move it to a new folder where this tidy data file will be found. This will serve as our working directory for the rest of this guide.</p>
-<p>The first six rows of linelist.csv should look something like this:</p>
+<p>For those using their own data, I would recommend to rename your columns to the column names above so that you don’t have to change anything in the codes below.</p>
+<p>First, let’s take a look at the dummy data quickly. Run the following lines of code and a table showing the first six rows should appear on the <code>Console</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>linelist &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;linelist.csv&quot;</span>)        <span class="co"># Importing the linelist.csv file</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">head</span>(linelist)                              <span class="co"># Displaying the first six rows of linelist</span></span></code></pre></div>
 <pre><code>##   ID   Municipality  DateOnset DateTested DateReported
 ## 1  1 Municipality C 2020-03-07 2020-03-16   2020-03-25
 ## 2  2 Municipality D 2020-03-05 2020-03-19   2020-03-31
@@ -158,11 +281,15 @@ code span.ot { color: #007020; }
 ## 4  4 Municipality E 2020-03-15 2020-03-18   2020-04-02
 ## 5  5 Municipality C 2020-03-21 2020-03-23   2020-04-03
 ## 6  6 Municipality C 2020-03-24 2020-03-27   2020-04-03</code></pre>
+<p>We will simulate two activities together with the calculation of the reproduction number with the dummy data:</p>
+<ul>
+<li>Imputation of <code>DateOnset</code> variable with a simple rule: If <code>DateOnset</code> is missing, then use <code>DateTested</code> minus 2 days; if both <code>DateOnset</code> and <code>DateTested</code>are missing, then use <code>DateReport</code> minus 4 days</li>
+<li>Stratify the analysis by the <code>Municipality</code> variable</li>
+</ul>
 <p><strong>Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option “CSV (Macintosh).” The other CSV file types do not render properly in R.</strong></p>
 <p><br></p>
-</div>
 <div id="incidence-table" class="section level3">
-<h3><span class="header-section-number">1.1.2</span> Incidence table</h3>
+<h3><span class="header-section-number">2.1.1</span> Incidence table</h3>
 <p>If you are more comfortable cleaning and processing data elsewhere, and just need R to do the analysis for you, we can skip to the part where the incidence table is already generated. An incidence table has two <strong>necessary</strong> columns: <strong><code>DateOnset</code></strong> (imputed or otherwise) and <strong><code>Count</code></strong></p>
 <ul>
 <li><strong><code>DateOnset</code></strong>: Date of symptom onset as reported by the case - often, symptom onset data is not complete and is imputed in many ways, such as using the date of testing (<strong><code>DateTested</code></strong>) and date of reporting (<strong><code>DateReported</code></strong>) instead
@@ -192,25 +319,15 @@ code span.ot { color: #007020; }
 ## 6 2020-03-10     0</code></pre>
 <p><br></p>
 <p>You may download the dummy data spreadsheet used for this demonstration at <URL> with the file name. Make sure to have a new folder in your computer where this tidy data file will be found. This will serve as our local directory.</p>
-</div>
-</div>
-<div id="setting-the-local-directory-and-opening-a-new-r-project" class="section level2">
-<h2><span class="header-section-number">1.2</span> Setting the local directory and opening a new R project</h2>
-<ol style="list-style-type: decimal">
-<li>Open RStudio. On the menu bar, click <code>File</code> &gt; <code>New Project...</code></li>
-<li>The <code>New Project Wizard</code> dialog box opens. click on <code>Existing Directory</code>.</li>
-<li>Under <code>Project working directory</code>, click <code>Browse...</code> and locate the folder of the local directory. If you want to be safe, just create a new folder on your Documents folder, e.g. “C:/Users/user/Documents/Demo” if you had named your local directory “Demo.”</li>
-<li>Click <code>Create Project.</code> At this point, you have created a new project file (.Rproj) as well as set the local directory. This local directory will contain all the files that will be imported and exported as part of this analysis.</li>
-<li>Create a new R script file using the keyboard shortcut <code>Ctrl-Shift-N</code> or going to <code>File</code> &gt; <code>New File</code> &gt; <code>R Script</code> or clicking on the New File button on the topmost left corner right below the menu bar then clicking <code>R Script</code>. The left side of the environment should split into two - with the script file found on the upper left side. The script file is similar to a do file for those who are familiar with Stata. Ideally, we should be saving all our code in a script file in case we need to redo or repeat analyses so that all we have to do is to run the script rather than coding everything from scratch again.</li>
-</ol>
 <p><strong>All the code that you see moving forward should be typed on your R script in sequence.</strong></p>
 </div>
+</div>
 <div id="load-packages-in-the-library" class="section level2">
-<h2><span class="header-section-number">1.3</span> Load packages in the library</h2>
+<h2><span class="header-section-number">2.2</span> Load packages in the library</h2>
 <p>First, we load the following packages in our library: <code>tidyverse</code>, <code>janitor</code>, <code>R0</code>, and <code>writexl</code></p>
 </div>
 <div id="working-directory" class="section level2">
-<h2><span class="header-section-number">1.4</span> Working directory</h2>
+<h2><span class="header-section-number">2.3</span> Working directory</h2>
 </div>
 </div>
 </section>
