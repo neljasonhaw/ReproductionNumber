@@ -77,16 +77,18 @@ To learn more about tidy data, refer to the following reference by Hadley Wickha
 ## Packages to Install
 You only need to install packages once in R. An internet connection is required.
 
-We will need four packages:
+We will need five packages:
 * The data analysis package `tidyverse`
 * The data cleaning package `janitor`
 * The reproduction number package `R0`
+* The incidence package `incidence`
 * The Excel spreadsheet exporter package `writexl`
 
 To install packages for the first time, go to the `Console` window (bottom right by default) and type the code `install.packages("package")`, replace package inside the quotes with each of the four packages above. Specifically, and do this one at a time:
 * `install.packages("tidyverse")`
 * `install.packages("janitor")`
 * `install.packages("R0")`
+* `install.packages("incidence")`
 * `install.packages("writexl")`
 
 When prompted for a server, choose the server nearest to your current location for the fastest possible download. You will know when any command in R is done running when you see the `>` symbol show up on the bottommost part of the `Console` window.
