@@ -2,13 +2,13 @@
 title: "Reproduction Number Code"
 author: "Created by Nel Jason Haw"
 date: "Last updated November 14, 2020"
-output: 
+output:
   prettydoc::html_pretty:
     theme: cayman
     highlight: github
-    toc: true
+    toc: yes
     toc_depth: 3
-    number_sections: true
+    number_sections: yes
 ---
 
 ```{r setup, include = FALSE}
@@ -24,14 +24,14 @@ Before starting in this page, please visit the [**README file**](https://neljaso
 
 # Getting Ready
 
-## Download Dummy Data (if you wanna follow along completely)
+## Download dummy data (if you wanna follow along completely)
 The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `Code` then click `Download ZIP`. Unzip and look for the file name `linelist.csv`s. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
 
 While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.
 
 <br>
 
-## Creating an R Studio Project
+## Creating an RStudio project
 1. Open RStudio. On the menu bar, click `File` > `New Project...`
 2. The `New Project Wizard` dialog box opens. click on `Existing Directory`. 
 3. Under `Project working directory`, click `Browse...` and locate the folder of the working directory.
@@ -40,7 +40,7 @@ While the files may usually be found in your Downloads folder, move it to a new 
 
 <br>
 
-## Installing Packages
+## Installing packages
 We will need to install the relevant R packages first. On the script file you just created, type the following chunk of code:
 ```{r library, message = FALSE}
 library(tidyverse)      # General data analysis package
@@ -59,7 +59,7 @@ Now, highlight the five lines of code on your script file, then click the `Run` 
 
 # Data Preparation
 
-## Tidy Data: Linelist
+## Tidy data: linelist
 Before starting to code, make sure that the tidy data version of your surveillance data is already available on your working directory. For those who want to follow along with dummy data, we have already done this. For those who want to use their own line list of cases, make sure you have done it at this point and rename the file as `linelist.csv` so that you don't have to change anything in the codes below.
 
 **Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option "CSV (Macintosh)." The other CSV file types do not render properly in R.**
@@ -89,10 +89,9 @@ Now, let's try to create an imputed version of the `DateOnset` variable called `
 Now, run the following code. Note that R does not mind when you break commands into multiple lines using `Enter`. In this case, given that the last line of code is too long, we decided to split it into more visually intuitive chunks. R will read the last four lines are one command. The indentation does not matter to R as well; it is more for us to see and understand the code more clearly.
 
 ``` {r imputation}
-linelist <- read.csv("linelist.csv")                                # Importing the linelist.csv file
 linelist$DateOnset <- as.Date(linelist$DateOnset, "%Y-%m-%d")       # Telling R that DateOnset is a date with format YYYY-MM-DD
-linelist$DateTested <- as.Date(linelist$DateTested, "%Y-%m-%d")     # Telling R that DateOnset is a date with format YYYY-MM-DD
-linelist$DateReported <- as.Date(linelist$DateReported, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
+linelist$DateTested <- as.Date(linelist$DateTested, "%Y-%m-%d")     # Telling R that DateTested is a date with format YYYY-MM-DD
+linelist$DateReported <- as.Date(linelist$DateReported, "%Y-%m-%d") # Telling R that DateReported is a date with format YYYY-MM-DD
 linelist <- linelist %>% mutate(DateOnset_imputed = 
                                   case_when(is.na(DateOnset) & !is.na(DateTested) ~ DateTested - 2,
                                             is.na(DateOnset) & is.na(DateTested) ~ DateReported - 4,
@@ -102,67 +101,173 @@ linelist <- linelist %>% mutate(DateOnset_imputed =
 Now let's run some checks to make sure the code ran correctly. Given that we imputed the `DateOnset` variable, one check we can do is to count how many missing values `DateOnset_imputed` variable has - the correct answer should be zero.
 
 ``` {r imputation_dataquality}
-sum(is.na(linelist$DateOnset_imputed))
+sum(is.na(linelist$DateOnset_imputed))      # Counts how many missing values are in DateOnset_imputed
 ```
 
 <br>
 
-### Incidence table
-If you are more comfortable cleaning and processing data elsewhere, and just need R to do the analysis for you, we can skip to the part where the incidence table is already generated. An incidence table has two **necessary** columns: **`DateOnset`** (imputed or otherwise) and **`Count`**
+## Incidence table
+Now that we have our imputed dates of symptom onset, we are ready to generate incidence tables. An incidence table is just a frequency table with each row representing a calendar date, together with the count of cases for that date.
 
-* **`DateOnset`**: Date of symptom onset as reported by the case - often, symptom onset data is not complete and is imputed in many ways, such as using the date of testing (**`DateTested`**) and date of reporting (**`DateReported`**) instead
-  * The imputation methods are highly dependent on the decisions made by the surveillance team. This page will not make any prescriptions on what the appropriate method is.
-  * Make sure to include all other variables that may be needed to impute the `DateOnset` variable, or if there is already a variable available with the imputed values, just use that one instead as `DateOnset`
+**IMPORTANT: The incidence table must have each date PER DAY as a row between two time periods. This means that dates with zero cases should display as dates with zero counts. If you chose to generate an incidence table elsewhere, say, using the PivotTable command in Excel, or even through the `table` command in R, the reproduction number calculation will not work.**
+
+* **`DateOnset_imputed`**: This is the variable with imputed dates of symptom onset calculated earlier.
 * **`Count`**: The number of new cases on that particular date. This should be a discrete variable, meaning there should only be positive integers, since we are counting people.
-* If you have any other variables that may be used to stratify the data, such as generating reproduction numbers per municipality (**`Municipality`**), for example, then retrieve the municipality variable as well.
 
-**IMPORTANT: The incidence table must have each date as a row between two time periods. This means that dates with zero cases should display as zero counts.
+Run the following lines of code to generate the incidence table, called `incidencetable`.
 
-In line with tidy data principles, make sure that the date variable has a uniform format. **I recommend using the date format "YYYY-MM-DD".**
-
-You may download the dummy data spreadsheet used for this demonstration in the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `**Code**` then click `Download ZIP`. Unzip and look for the file name **incidencetable.csv**.
-
-We will simulate two activities together with the calculation of the reproduction number with the dummy data:
-
-* Imputation of `DateOnset` variable with a simple rule: If `DateOnset` is missing, then use `DateTested` minus 2 days; if both `DateOnset` and `DateTested`are missing, then use `DateReport` minus 4 days
-* Stratify the analysis by the `Municipality` variable
-
-While this file may usually be found in your Downloads folder, move it to a new folder where this tidy data file will be found. This will serve as our working directory for the rest of this guide.
-
-The first six rows of incidencetable.csv should look something like this:
-```{r head_incidencetablecsv, echo = FALSE}
-
-incidence <- incidence(linelist$DateOnset_imputed)       # Generate incidence table as incidence object
-incidencetable <- data.frame(incidence$dates, incidence$counts)    # Generate incidence table as dataframe
-colnames(incidencetable) <- c("DateOnset", "Count")     # Rename columns
-head(incidencetable)
-write.csv(incidencetable, "incidencetable.csv")
+```{r head_incidencetablecsv}
+incidence <- incidence(linelist$DateOnset_imputed)                 # Generate incidence table as incidence object (incidence)
+incidencetable <- data.frame(incidence$dates, incidence$counts)    # Generate incidence table as frequency table
+colnames(incidencetable) <- c("DateOnset_imputed", "Count")        # Rename columns
+head(incidencetable)                                               # Displaying the first six rows of incidence table
+write.csv(incidencetable, "incidencetable.csv")                    # Export incidence table to CSV if you need it elsewhere (optional)
 ```
+
+Notice how Row 6, March 10, 2020, has zero cases and is tallied as such. If you had used other commands to generate this and the zero count for this date does not show up, then you did not generate the incidence table correctly.
 
 <br>
 
 
+# Estimating Reproduction Number
+
+## Declaring serial interval distribution
+A serial interval distribution must be declared beforehand. You may estimate serial interval either by:
+
+* Retrieving the distribution and parameters from literature - usually you would find these values in modelling studies. Take note of the assumptions and context in which these parameters were originally used before applying it to your own analysis.
+* Identifying a subset of your linelist with known infector-infectee pairs that have complete data on dates of symptom onset. Calculate the differences in dates of symptom onset between these pairs and model the most appropriate distribution and calculate relevant parameters.
+
+This guide will not teach you how to estimate a serial interval distribution.
+
+In this guide, let us use a hypothetical example from hypothetical literature where the serial interval distribution was determined to be weibull with mean 7.0 days and standard deviation 5.5 days.
+
+Run the following code to store the serial interval distribution in a list called `mGT`
+```{r serialinterval}
+mGT <- generation.time("weibull", c(7.0, 5.5), nrow(linelist))
+```
+
+<br>
+
+## Choosing an appropriate time period for the analysis
+When estimating time-varying reproduction number $R_t$, it is best for us to identify first an appropriate time period for the analysis. This  guide will not teach you how to identify that appropriate time period, but keep in mind three things:
+
+* At the beginning stages of an infectious disease outbreak, the cases may not be growing exponentially yet, especially if the cases are occurring far apart from one another for it to be considered epidemiologically-linked. So we usually choose a start period generally around the time when cases start to exponentially increase.
+* We usually do not interpret time-varying reproduction numbers too close to the present, given that there are significant surveillance lags between time to symptom onset and reporting. That lag period is to be determined based on the surveillance team's understanding of this lag. Every health system is unique in this regard and careful considerations must be made because reproduction numbers close to the present are expected to decrease during the present because more cases are yet to be reported, and should not be interpreted as a true decrease in cases.
+* Often, surveillance teams analyze data on a specific weekly basis, called a Morbidity Week calendar, that is defined at the start of every calendar year, so there are times when epidemiological analyses are aggregated at the weekly level. Surveillance teams are usually aware of this calendar, but other researchers trying to make sense of surveillance data should consult references that explicitly indicate this weekly calendar.
+
+Let's try to simulate this exercise with our dummy data. **Note that any of the steps below are NOT prescriptive; part of an epidemiologist's job is to triangulate surveillance data with field surveillance observations and health system contexts.**
+
+First, let's visualize an epidemic curve where each bar covers seven days.
+```{r epicurve}
+ggplot(linelist, aes(x = DateOnset_imputed)) +                            # Call data
+       geom_histogram(binwidth = 7, fill = "#156A86", color = "black") +  # Indicate visualizaiton is histogram with bin width 7 days, custom colors
+       xlab("Date of Symptom Onset (imputed)") + ylab("Number of Cases")  # Renaming x and y axis labels
+```
+
+Based on the epidemic curve, it seems like a reasonable starting point for the time period of the analysis is two weeks before the start of July (say, June 15, which is a Monday), and a reasonable end point is the last week of October (say, November 1, which is a Sunday)
+
+We then restrict our analyses to these dates into a new data file called `incidencetable_subset`
+``` {r subset}
+incidencetable_subset <- incidencetable %>% filter(DateOnset_imputed >= as.Date("2020-06-15") & DateOnset_imputed <= as.Date("2020-11-01"))
+# %>% is a pipe filter in the dplyr package that makes coding more readable
+```
+
+<br>
+
+## Plot reproduction number curve
+And finally, we are ready to calculate the reproduction number. You will store the results in an object called `Rt`
+
+Note that the `R0` package has multiple methods available, but for this guide, we will use the [Wallinga and Teunis (2004) method](https://academic.oup.com/aje/article/160/6/509/79472).
+
+Note that depending on the computational capacity of your computer, this takes some time. Be patient.
+
+```{r rt, cache = TRUE}
+Rt <- estimate.R(epid = incidencetable_subset$Count, t = incidencetable_subset$Date, 
+                 GT=mGT, method="TD", begin="2020-06-15", end="2020-11-01")
+# epid declares the incidence counts
+# t declares the corresponding dates
+# GT declares the serial interval distribution curve generated earlier
+# TD indicates the Wallinga and Teunis (2004) method
+```
+
+Save the Rt values per day together with the 95% confidence interval based on the values from `Rt`
+```{r rt_values}
+Rt_table <- data.frame(Rt$t, Rt$estimates$TD$R, Rt$estimates$TD$conf.int$lower, Rt$estimates$TD$conf.int$upper) # Generate table
+# Note that you replace TD with the method you ended up using from R0. Use the command str(Rt) to identify what values you exactly need
+colnames(Rt_table) <- c("date", "Rt", "lowerCI", "upperCI") # Assign column names
+Rt_table <- slice(Rt_table, 1:(n()-1))                      # Remove last row since that is zero (it messes up the graph)
+write_xlsx(Rt_table, "Rt_table.xlsx")                       # Save as Excel file if you need it elsewhere (optional)
+```
+
+You may also plot the reproduction number curve. By default you can just use the command `plot(Rt)` but if you want to add some color, use `ggplot` instead and store the graph in an object called `rt_plot`
+```{r curve}
+rt_plot <- ggplot(Rt_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", lwd = 2) +   # Plot the line with point estimates, custom colors
+                  geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + # Plot the 95% confidence intervals, custom colors
+                  xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
+rt_plot
+```
+
+The graph has the point estimates as solid lines, and the 95% confidence intervals (CI) as bands surrounding the solid lines
+
+This guide will not teach you how to interpret this curve, but note of the following considerations
+
+* Take into account interventions that attempted to break chains of transmission
+* Take into account geographic spread of the outbreak over time
+* Take into account the precision of the estimates
+
+If you want to export the graph for use outside of R, run the following code
+```{r ggplot_save}
+ggsave(file="rt_plot.png", rt_plot, width = 160, height = 90, unit = "mm") # You may customize dimensions as you wish
+```
+
+<br>
+
+## Conducting subanalyses
+Let's say you want to stratify the Rt analysis by a certain variable. Using the dummy data, let us try to limit the analysis to Municipality C.
+
+All you have to do is to filter the data first, then repeat the steps above on identifying an appropriate time period for analysis and running the calculations.
+
+```{r municipalityC}
+linelist_C <- linelist %>% filter(Municipality == "Municipality C")       # Filter all cases from Municipality C
+ggplot(linelist_C, aes(x = DateOnset_imputed)) +                          # Call data
+       geom_histogram(binwidth = 7, fill = "#156A86", color = "black") +  # Indicate visualizaiton is histogram with bin width 7 days, custom colors
+       xlab("Date of Symptom Onset (imputed)") + ylab("Number of Cases")  # Renaming x and y axis labels
+
+```
+Based on the epidemic curve, it seems like a reasonable starting point for the time period of the analysis is the start of July (say, July 6, which is a Monday), and a reasonable end point is the last week of October (say, October 25, which is a Sunday)
+
+As an alternative way of doing things above, you may subset the linelist first then generate the incidence table
+``` {r subset_C}
+linelist_C_subset <- linelist_C %>% filter(DateOnset_imputed >= as.Date("2020-06-15") & DateOnset_imputed <= as.Date("2020-10-25"))
+incidence_C <- incidence(linelist_C_subset$DateOnset_imputed)         # Generate incidence table as incidence object (incidence_C)
+incidencetable_C <- data.frame(incidence_C$dates, incidence_C$counts) # Generate incidence table as frequency table
+colnames(incidencetable_C) <- c("DateOnset_imputed", "Count")         # Rename columns
+head(incidencetable_C)                                                # Displaying the first six rows of incidence table
+write.csv(incidencetable_C, "incidencetable_C.csv")                   # Export incidence table to CSV if you need it elsewhere (optional)
+
+```
+
+Using the same serial interval distribution and method of estimation, you may calculate the reproduction numbers.
+
+```{r rt_C, cache = TRUE}
+Rt_C <- estimate.R(epid = incidencetable_C$Count, t = incidencetable_C$Date, 
+                   GT=mGT, method="TD", begin="2020-06-15", end="2020-10-25")
+```
+```{r rt_C_values}
+Rt_C_table <- data.frame(Rt_C$t, Rt_C$estimates$TD$R, Rt_C$estimates$TD$conf.int$lower, Rt_C$estimates$TD$conf.int$upper)
+colnames(Rt_C_table) <- c("date", "Rt", "lowerCI", "upperCI") 
+Rt_C_table <- slice(Rt_table, 1:(n()-1))                      
+write_xlsx(Rt_C_table, "Rt_C_table.xlsx")                     
+```
+
+You may also plot the reproduction number curve. By default you can just use the command `plot(Rt)` but if you want to add some color, use `ggplot` instead and store the graph in an object called `rt_plot`
+```{r C_curve}
+rt_C_plot <- ggplot(Rt_C_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", lwd = 2) +   
+                  geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
+                  xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
+rt_C_plot
+```
+<br>
 
 
-
-
-
-
-You may download the dummy data spreadsheet used for this demonstration at <URL> with the file name. Make sure to have a new folder in your computer where this tidy data file will be found. This will serve as our local directory.
-
-
-
-
-
-
-
-
-
-**All the code that you see moving forward should be typed on your R script in sequence.**
-
-## Load packages in the library
-First, we load the following packages in our library: `tidyverse`, `janitor`, `R0`, and `writexl`
-
-
-## Working directory
-
+If there are any questions or comments, please feel free to drop a message over at Twitter - [`@`jasonhaw](https://www.twitter.com/jasonhaw_).
