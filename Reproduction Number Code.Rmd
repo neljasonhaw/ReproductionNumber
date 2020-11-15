@@ -181,7 +181,7 @@ Note that the `R0` package has multiple methods available, but for this guide, w
 
 Note that depending on the computational capacity of your computer, this takes some time. Be patient.
 
-```{r rt, cache = TRUE, message = FALSE}
+```{r rt, cache = TRUE, warning = FALSE}
 Rt <- estimate.R(epid = incidencetable_subset$Count, t = incidencetable_subset$Date, 
                  GT=mGT, method="TD", begin="2020-06-15", end="2020-11-01")
 # epid declares the incidence counts
@@ -190,7 +190,7 @@ Rt <- estimate.R(epid = incidencetable_subset$Count, t = incidencetable_subset$D
 # TD indicates the Wallinga and Teunis (2004) method
 ```
 
-Save the Rt values per day together with the 95% confidence interval based on the values from `Rt`
+Save the `Rt` values per day together with the 95% confidence interval based on the values from `Rt`
 ```{r rt_values}
 Rt_table <- data.frame(Rt$t, Rt$estimates$TD$R, Rt$estimates$TD$conf.int$lower, Rt$estimates$TD$conf.int$upper) # Generate table
 # Note that you replace TD with the method you ended up using from R0. Use the command str(Rt) to identify what values you exactly need
@@ -223,7 +223,7 @@ ggsave(file="rt_plot.png", rt_plot, width = 160, height = 90, unit = "mm") # You
 <br>
 
 ## Conducting subanalyses
-Let's say you want to stratify the Rt analysis by a certain variable. Using the dummy data, let us try to limit the analysis to Municipality C.
+Let's say you want to limit or stratify the analysis by a certain variable. Using the dummy data, let us try to limit the analysis to Municipality C.
 
 All you have to do is to filter the data first, then repeat the steps above on identifying an appropriate time period for analysis and running the calculations.
 
@@ -249,7 +249,7 @@ write.csv(incidencetable_C, "incidencetable_C.csv")                   # Export i
 
 Using the same serial interval distribution and method of estimation, you may calculate the reproduction numbers.
 
-```{r rt_C, cache = TRUE, message = FALSE}
+```{r rt_C, cache = TRUE, warning = FALSE}
 Rt_C <- estimate.R(epid = incidencetable_C$Count, t = incidencetable_C$Date, 
                    GT=mGT, method="TD", begin="2020-06-15", end="2020-10-25")
 ```
@@ -263,8 +263,8 @@ write_xlsx(Rt_C_table, "Rt_C_table.xlsx")
 You may also plot the reproduction number curve. By default you can just use the command `plot(Rt)` but if you want to add some color, use `ggplot` instead and store the graph in an object called `rt_plot`
 ```{r C_curve}
 rt_C_plot <- ggplot(Rt_C_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", lwd = 2) +   
-                  geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
-                  xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
+                    geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
+                    xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
 rt_C_plot
 ```
 <br>
