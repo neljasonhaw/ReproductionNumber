@@ -25,7 +25,7 @@ Before starting in this page, please visit the [**README file**](https://neljaso
 # Getting Ready
 
 ## Download Dummy Data (if you wanna follow along completely)
-The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button **Code** then click `Download ZIP`. Unzip and look for the file name **linelist.csv**. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
+The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `Code` then click `Download ZIP`. Unzip and look for the file name `linelist.csv`s. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
 
 While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.
 
@@ -62,6 +62,8 @@ Now, highlight the five lines of code on your script file, then click the `Run` 
 ## Tidy Data: Linelist
 Before starting to code, make sure that the tidy data version of your surveillance data is already available on your working directory. For those who want to follow along with dummy data, we have already done this. For those who want to use their own line list of cases, make sure you have done it at this point and rename the file as `linelist.csv` so that you don't have to change anything in the codes below.
 
+**Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option "CSV (Macintosh)." The other CSV file types do not render properly in R.**
+
 Raw data cleaning is highly dependent on the raw data you have, so if you are not yet familiar with data cleaning using R, clean the data elsewhere first. This guide will not teach you how to clean the data, although this arguably takes majority of one's time when doing data analysis.
 
 The line list, at the minimum, should contain the following columns:
@@ -82,13 +84,26 @@ linelist <- read.csv("linelist.csv")        # Importing the linelist.csv file
 head(linelist)                              # Displaying the first six rows of linelist
 ```
 
-We will simulate two activities together with the calculation of the reproduction number with the dummy data:
+Now, let's try to create an imputed version of the `DateOnset` variable called `DateOnset_imputed`. In this hypothetical case, let's have a simple rule: If `DateOnset` is missing, then use `DateTested` minus 2 days; if both `DateOnset` and `DateTested`are missing, then use `DateReport` minus 4 days
 
-* Imputation of `DateOnset` variable with a simple rule: If `DateOnset` is missing, then use `DateTested` minus 2 days; if both `DateOnset` and `DateTested`are missing, then use `DateReport` minus 4 days
-* Stratify the analysis by the `Municipality` variable
+Now, run the following code. Note that R does not mind when you break commands into multiple lines using `Enter`. In this case, given that the last line of code is too long, we decided to split it into more visually intuitive chunks. R will read the last four lines are one command. The indentation does not matter to R as well; it is more for us to see and understand the code more clearly.
 
+``` {r imputation}
+linelist <- read.csv("linelist.csv")                                # Importing the linelist.csv file
+linelist$DateOnset <- as.Date(linelist$DateOnset, "%Y-%m-%d")       # Telling R that DateOnset is a date with format YYYY-MM-DD
+linelist$DateTested <- as.Date(linelist$DateTested, "%Y-%m-%d")     # Telling R that DateOnset is a date with format YYYY-MM-DD
+linelist$DateReported <- as.Date(linelist$DateReported, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
+linelist <- linelist %>% mutate(DateOnset_imputed = 
+                                  case_when(is.na(DateOnset) & !is.na(DateTested) ~ DateTested - 2,
+                                            is.na(DateOnset) & is.na(DateTested) ~ DateReported - 4,
+                                            TRUE ~ DateOnset))      # Imputation algorithm
+```
 
-**Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option "CSV (Macintosh)." The other CSV file types do not render properly in R.**
+Now let's run some checks to make sure the code ran correctly. Given that we imputed the `DateOnset` variable, one check we can do is to count how many missing values `DateOnset_imputed` variable has - the correct answer should be zero.
+
+``` {r imputation_dataquality}
+sum(is.na(linelist$DateOnset_imputed))
+```
 
 <br>
 
@@ -116,13 +131,7 @@ While this file may usually be found in your Downloads folder, move it to a new 
 
 The first six rows of incidencetable.csv should look something like this:
 ```{r head_incidencetablecsv, echo = FALSE}
-linelist <- read.csv("linelist.csv")                          # Importing the linelist.csv file
-linelist$DateOnset <- as.Date(linelist$DateOnset, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
-linelist$DateTested <- as.Date(linelist$DateTested, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
-linelist$DateReported <- as.Date(linelist$DateReported, "%Y-%m-%d") # Telling R that DateOnset is a date with format YYYY-MM-DD
-linelist <- linelist %>% mutate(DateOnset_imputed = case_when(is.na(DateOnset) & !is.na(DateTested) ~ DateTested - 2,
-                                                              is.na(DateOnset) & is.na(DateTested) ~ DateReported - 4,
-                                                              TRUE ~ DateOnset))        # Imputation algorithm
+
 incidence <- incidence(linelist$DateOnset_imputed)       # Generate incidence table as incidence object
 incidencetable <- data.frame(incidence$dates, incidence$counts)    # Generate incidence table as dataframe
 colnames(incidencetable) <- c("DateOnset", "Count")     # Rename columns

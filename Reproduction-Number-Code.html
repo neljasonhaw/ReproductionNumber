@@ -225,7 +225,7 @@ code span.ot { color: #007020; }
 <h1><span class="header-section-number">1</span> Getting Ready</h1>
 <div id="download-dummy-data-if-you-wanna-follow-along-completely" class="section level2">
 <h2><span class="header-section-number">1.1</span> Download Dummy Data (if you wanna follow along completely)</h2>
-<p>The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the <a href="https://github.com/neljasonhaw/ReproductionNumber"><strong>Github repository here</strong></a>. Click on the green button <strong>Code</strong> then click <code>Download ZIP</code>. Unzip and look for the file name <strong>linelist.csv</strong>. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.</p>
+<p>The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the <a href="https://github.com/neljasonhaw/ReproductionNumber"><strong>Github repository here</strong></a>. Click on the green button <code>Code</code> then click <code>Download ZIP</code>. Unzip and look for the file name <code>linelist.csv</code>s. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.</p>
 <p>While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.</p>
 <p><br></p>
 </div>
@@ -258,6 +258,7 @@ code span.ot { color: #007020; }
 <div id="tidy-data-linelist" class="section level2">
 <h2><span class="header-section-number">2.1</span> Tidy Data: Linelist</h2>
 <p>Before starting to code, make sure that the tidy data version of your surveillance data is already available on your working directory. For those who want to follow along with dummy data, we have already done this. For those who want to use their own line list of cases, make sure you have done it at this point and rename the file as <code>linelist.csv</code> so that you don’t have to change anything in the codes below.</p>
+<p><strong>Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option “CSV (Macintosh).” The other CSV file types do not render properly in R.</strong></p>
 <p>Raw data cleaning is highly dependent on the raw data you have, so if you are not yet familiar with data cleaning using R, clean the data elsewhere first. This guide will not teach you how to clean the data, although this arguably takes majority of one’s time when doing data analysis.</p>
 <p>The line list, at the minimum, should contain the following columns:</p>
 <ul>
@@ -281,12 +282,19 @@ code span.ot { color: #007020; }
 ## 4  4 Municipality E 2020-03-15 2020-03-18   2020-04-02
 ## 5  5 Municipality C 2020-03-21 2020-03-23   2020-04-03
 ## 6  6 Municipality C 2020-03-24 2020-03-27   2020-04-03</code></pre>
-<p>We will simulate two activities together with the calculation of the reproduction number with the dummy data:</p>
-<ul>
-<li>Imputation of <code>DateOnset</code> variable with a simple rule: If <code>DateOnset</code> is missing, then use <code>DateTested</code> minus 2 days; if both <code>DateOnset</code> and <code>DateTested</code>are missing, then use <code>DateReport</code> minus 4 days</li>
-<li>Stratify the analysis by the <code>Municipality</code> variable</li>
-</ul>
-<p><strong>Note: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option “CSV (Macintosh).” The other CSV file types do not render properly in R.</strong></p>
+<p>Now, let’s try to create an imputed version of the <code>DateOnset</code> variable called <code>DateOnset_imputed</code>. In this hypothetical case, let’s have a simple rule: If <code>DateOnset</code> is missing, then use <code>DateTested</code> minus 2 days; if both <code>DateOnset</code> and <code>DateTested</code>are missing, then use <code>DateReport</code> minus 4 days</p>
+<p>Now, run the following code. Note that R does not mind when you break commands into multiple lines using <code>Enter</code>. In this case, given that the last line of code is too long, we decided to split it into more visually intuitive chunks. R will read the last four lines are one command. The indentation does not matter to R as well; it is more for us to see and understand the code more clearly.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>linelist &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;linelist.csv&quot;</span>)                                <span class="co"># Importing the linelist.csv file</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>linelist<span class="op">$</span>DateOnset &lt;-<span class="st"> </span><span class="kw">as.Date</span>(linelist<span class="op">$</span>DateOnset, <span class="st">&quot;%Y-%m-%d&quot;</span>)       <span class="co"># Telling R that DateOnset is a date with format YYYY-MM-DD</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>linelist<span class="op">$</span>DateTested &lt;-<span class="st"> </span><span class="kw">as.Date</span>(linelist<span class="op">$</span>DateTested, <span class="st">&quot;%Y-%m-%d&quot;</span>)     <span class="co"># Telling R that DateOnset is a date with format YYYY-MM-DD</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>linelist<span class="op">$</span>DateReported &lt;-<span class="st"> </span><span class="kw">as.Date</span>(linelist<span class="op">$</span>DateReported, <span class="st">&quot;%Y-%m-%d&quot;</span>) <span class="co"># Telling R that DateOnset is a date with format YYYY-MM-DD</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>linelist &lt;-<span class="st"> </span>linelist <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">DateOnset_imputed =</span> </span>
+<span id="cb4-6"><a href="#cb4-6"></a>                                  <span class="kw">case_when</span>(<span class="kw">is.na</span>(DateOnset) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(DateTested) <span class="op">~</span><span class="st"> </span>DateTested <span class="op">-</span><span class="st"> </span><span class="dv">2</span>,</span>
+<span id="cb4-7"><a href="#cb4-7"></a>                                            <span class="kw">is.na</span>(DateOnset) <span class="op">&amp;</span><span class="st"> </span><span class="kw">is.na</span>(DateTested) <span class="op">~</span><span class="st"> </span>DateReported <span class="op">-</span><span class="st"> </span><span class="dv">4</span>,</span>
+<span id="cb4-8"><a href="#cb4-8"></a>                                            <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span>DateOnset))      <span class="co"># Imputation algorithm</span></span></code></pre></div>
+<p>Now let’s run some checks to make sure the code ran correctly. Given that we imputed the <code>DateOnset</code> variable, one check we can do is to count how many missing values <code>DateOnset_imputed</code> variable has - the correct answer should be zero.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">sum</span>(<span class="kw">is.na</span>(linelist<span class="op">$</span>DateOnset_imputed))</span></code></pre></div>
+<pre><code>## [1] 0</code></pre>
 <p><br></p>
 <div id="incidence-table" class="section level3">
 <h3><span class="header-section-number">2.1.1</span> Incidence table</h3>
