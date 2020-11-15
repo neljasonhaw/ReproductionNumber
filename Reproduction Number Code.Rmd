@@ -234,6 +234,7 @@ ggplot(linelist_C, aes(x = DateOnset_imputed)) +                          # Call
        xlab("Date of Symptom Onset (imputed)") + ylab("Number of Cases")  # Renaming x and y axis labels
 
 ```
+
 Based on the epidemic curve, it seems like a reasonable starting point for the time period of the analysis is the start of July (say, July 6, which is a Monday), and a reasonable end point is the last week of October (say, October 25, which is a Sunday)
 
 As an alternative way of doing things above, you may subset the linelist first then generate the incidence table
