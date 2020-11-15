@@ -16,7 +16,7 @@ A guide for estimating reproduction number targeted towards epidemiologists with
 * Finally, hbctraining has an [excellent beginner's guide to the R syntax and data structures](https://hbctraining.github.io/Intro-to-R/lessons/02_introR-syntax-and-data-structures.html).
 
 ## Tidy Data Principles
-Often, the data we have as part of routine surveillance activities may not be the version ready for any type of statistical analysis. This raw data MUST be processed into tidy data. At the basic level, tidy data MUST HAVE:
+Often, the data we have as part of surveillance may not be the version ready for any type of statistical analysis. This raw data MUST be processed into tidy data. At the basic level:
 * Each row = one observation representing the unit of analysis
 * Each column = one variable
 * Each cell = standard data format, usually defined by a coding manual
@@ -24,8 +24,8 @@ Often, the data we have as part of routine surveillance activities may not be th
 
 Tidy data MUST NOT HAVE:
 * Any blanks, unless these are true missing data
-* Minimizes the use of special characters
-* Have merged cells ANYWHERE - merged cells are good visually but not for analysis
+* Too many special characters, unless absolutely necessary
+* Merged cells ANYWHERE - merged cells may be good visually but not for analysis
 * colors to identify variables - these must be defined as a new column (variable), as colors cannot be read into analysis
 
 For example, say we have five COVID-19 confirmed cases, and our raw data looks something like this on a spreadsheet:
@@ -36,7 +36,7 @@ This raw data file:
 * Does not have a standard format for the cells - the dates are all encoded inconsistently
 * Has merged cells horizontally and vertically
 * "Flattens" the tests together with the cases
-* Has colored cells but no explanation - in this case, the yellow ones were the latest reported cases (in this hypothetical case, it is Oct 2) and then the rest of the rows have no indication of when they were reported
+* Has colored cells but no explanation - in this case, the yellow ones were the latest reported cases (in this hypothetical case, it is Oct 2) and the rest of the rows have no indication of when they were reported
 
 We should split the data into two tables: one where each row is a case, another where each row is a test. The two tables are linked by a common, static ID. A tidy data version of the file above could look something like this instead:
 
@@ -71,11 +71,11 @@ Additionally, there should be some sort of coding manual. For example:
 * DateTest: Date when case was swabbed for confirmatory testing (format: YYYY-MM-DD)
 * Result: Result of test conducted (Positive, Negative, Equivocal, Invalid)
 
-You may prepare the tidy data using a spreadsheet program, which may be familiar to most, but it is much better to prepare the tidy data using R by feeding the raw data as is, although this requires some basic knowledge of data cleaning in R and takes quite a big of trial and error when doing it for the first time. It would even be better if the data structure of the raw data itself would be revised to make it more analysis-friendly.
+You may prepare the tidy data using a spreadsheet program, which may be familiar to most people. But it is much better to prepare the tidy data using R by feeding the raw data as is, although this requires some basic knowledge of data cleaning in R and takes quite a bit of trial and error when doing it for the first time. It would even be better if the data structure of the raw data itself would be revised to make it more analysis-friendly. This guide will not teach you how to clean data.
 
 To learn more about tidy data, refer to the following reference by Hadley Wickham [(Paper)](http://vita.had.co.nz/papers/tidy-data.pdf) [(Video)](http://vimeo.com/33727555)
 
-## Packages to Install
+## Packages to install
 You only need to install packages once in R. An internet connection is required.
 
 We will need five packages:
@@ -94,4 +94,4 @@ To install packages for the first time, go to the `Console` window (bottom right
 
 When prompted for a server, choose the server nearest to your current location for the fastest possible download. You will know when any command in R is done running when you see the `>` symbol show up on the bottommost part of the `Console` window again.
 
-The actual commands for estimating reproduction number will be in the [Reproduction Number Code guide](https://neljasonhaw.github.io/ReproductionNumber/Reproduction-Number-Code.html).
+The actual codes for estimating reproduction number will be in the [Reproduction Number Code guide](https://neljasonhaw.github.io/ReproductionNumber/Reproduction-Number-Code.html).
