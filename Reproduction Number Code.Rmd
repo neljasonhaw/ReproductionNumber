@@ -24,7 +24,7 @@ Before starting in this page, please visit the [**README file**](https://neljaso
 
 # Getting Ready
 
-## Download dummy data (if you wanna follow along completely)
+## Downloading dummy data (if you wanna follow along completely)
 The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `Code` then click `Download ZIP`. Unzip and look for the file name `linelist.csv`. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
 
 While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.
@@ -40,8 +40,8 @@ While the files may usually be found in your Downloads folder, move it to a new 
 
 <br>
 
-## Installing packages
-We will need to install the relevant R packages first. On the script file you just created, type the following chunk of code:
+## Loading packages
+We will need to load the relevant R packages first. Make sure that the packages are installed prior to loading them. On the script file you just created, type the following chunk of code:
 ```{r library, message = FALSE}
 library(tidyverse)      # General data analysis package
 library(janitor)        # General data cleaning package
@@ -106,7 +106,7 @@ sum(is.na(linelist$DateOnset_imputed))      # Counts how many missing values are
 
 <br>
 
-## Incidence table
+## Generating incidence table
 Now that we have our imputed dates of symptom onset, we are ready to generate incidence tables. An incidence table is just a frequency table with each row representing a calendar date, together with the count of cases for that date.
 
 **IMPORTANT: The incidence table must have each date PER DAY as a row between two time periods. This means that dates with zero cases should display as dates with zero counts. If you chose to generate an incidence table elsewhere, say, using the PivotTable command in Excel, or even through the `table` command in R, the reproduction number calculation will not work.**
@@ -174,7 +174,7 @@ incidencetable_subset <- incidencetable %>% filter(DateOnset_imputed >= as.Date(
 
 <br>
 
-## Plot reproduction number curve
+## Plotting reproduction number curve
 And finally, we are ready to calculate the reproduction number. You will store the results in an object called `Rt`
 
 Note that the `R0` package has multiple methods available, but for this guide, we will use the [Wallinga and Teunis (2004) method](https://academic.oup.com/aje/article/160/6/509/79472).
