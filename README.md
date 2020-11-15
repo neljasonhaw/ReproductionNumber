@@ -10,9 +10,9 @@ A guide for estimating reproduction number targeted towards epidemiologists with
 
 ## Getting started with R
 * We need to first install the open-source programming language and environment R, together with RStudio, an integrated development environment (IDE) for R.
-* TechVidVan has a great starter guide on how to install R and RStudio meant for beginners on all types of operating systems: https://techvidvan.com/tutorials/install-r/
-* On its own, R doesn't really do much. This is where packages come in. DataCamp has a great guide to understanding what R packages are, formatted like Frequently Asked Questions (FAQs): https://www.datacamp.com/community/tutorials/r-packages-guide
-* Finally, opening RStudio for the first time may be overwhelming. Antoine Soetewey's Stats and R blog has a beginner-level introduction to the RStudio interface: https://www.statsandr.com/blog/how-to-install-r-and-rstudio/#the-main-components-of-rstudio
+* [TechVidVan has a great starter guide on how to install R and RStudio meant for beginners on all types of operating systems](https://techvidvan.com/tutorials/install-r/)
+* On its own, R doesn't really do much. This is where packages come in. [DataCamp has a great guide to understanding what R packages are, formatted like Frequently Asked Questions (FAQs)](https://www.datacamp.com/community/tutorials/r-packages-guide)
+* Finally, opening RStudio for the first time may be overwhelming. [Antoine Soetewey's Stats and R blog has a beginner-level introduction to the RStudio interface]( https://www.statsandr.com/blog/how-to-install-r-and-rstudio/#the-main-components-of-rstudio)
 
 ## Tidy Data Principles
 Often, the data we have as part of routine surveillance activities may not be the version ready for any type of statistical analysis. This raw data MUST be processed into tidy data. At the basic level, tidy data MUST HAVE:
@@ -72,9 +72,7 @@ Additionally, there should be some sort of coding manual. For example:
 
 You may prepare the tidy data using a spreadsheet program, which may be familiar to most, but it is much better to prepare the tidy data using R by feeding the raw data as is, although this requires some basic knowledge of data cleaning in R and takes quite a big of trial and error when doing it for the first time. It would even be better if the data structure of the raw data itself would be revised to make it more analysis-friendly.
 
-To learn more about tidy data, refer to the following reference by Hadley Wickham:
-* Paper: http://vita.had.co.nz/papers/tidy-data.pdf
-* Video: http://vimeo.com/33727555
+To learn more about tidy data, refer to the following reference by Hadley Wickham [(Paper)](http://vita.had.co.nz/papers/tidy-data.pdf) [(Video)](http://vimeo.com/33727555)
 
 ## Packages to Install
 You only need to install packages once in R. An internet connection is required.
@@ -95,4 +93,4 @@ To install packages for the first time, go to the `Console` window (bottom right
 
 When prompted for a server, choose the server nearest to your current location for the fastest possible download. You will know when any command in R is done running when you see the `>` symbol show up on the bottommost part of the `Console` window again.
 
-The actual commands for estimating reproduction number will be in the Reproduction Number Code file: https://neljasonhaw.github.io/ReproductionNumber/Reproduction-Number-Code.html.
+The actual commands for estimating reproduction number will be in the [Reproduction Number Code guide](https://neljasonhaw.github.io/ReproductionNumber/Reproduction-Number-Code.html).
