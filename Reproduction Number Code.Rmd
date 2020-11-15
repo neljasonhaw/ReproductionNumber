@@ -25,7 +25,7 @@ Before starting in this page, please visit the [**README file**](https://neljaso
 # Getting Ready
 
 ## Download dummy data (if you wanna follow along completely)
-The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `Code` then click `Download ZIP`. Unzip and look for the file name `linelist.csv`s. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
+The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `Code` then click `Download ZIP`. Unzip and look for the file name `linelist.csv`. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
 
 While the files may usually be found in your Downloads folder, move it to a new folder anywhere else in your computer (say, your Documents folder) and give it a name. This new folder will serve as our working directory, so remember where it is.
 
