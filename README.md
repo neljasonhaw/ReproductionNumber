@@ -9,10 +9,11 @@ A guide for estimating reproduction number targeted towards epidemiologists with
 * Work collaboratively in the context of an ongoing infectious disease outbreak
 
 ## Getting started with R
-* We need to first install the open-source programming language and environment R, together with RStudio, an integrated development environment (IDE) for R.
+* We need to first install the [open-source programming language and environment R](https://cran.r-project.org/bin/windows/base/), together with [RStudio, an integrated development environment (IDE) for R](https://rstudio.com/products/rstudio/download/#download).
 * [TechVidVan has a great starter guide on how to install R and RStudio meant for beginners on all types of operating systems](https://techvidvan.com/tutorials/install-r/)
 * On its own, R doesn't really do much. This is where packages come in. [DataCamp has a great guide to understanding what R packages are, formatted like Frequently Asked Questions (FAQs)](https://www.datacamp.com/community/tutorials/r-packages-guide)
-* Finally, opening RStudio for the first time may be overwhelming. [Antoine Soetewey's Stats and R blog has a beginner-level introduction to the RStudio interface]( https://www.statsandr.com/blog/how-to-install-r-and-rstudio/#the-main-components-of-rstudio)
+* Opening RStudio for the first time may be overwhelming. [Antoine Soetewey's Stats and R blog has a beginner-level introduction to the RStudio interface]( https://www.statsandr.com/blog/how-to-install-r-and-rstudio/#the-main-components-of-rstudio)
+* Finally, hbctraining has an [excellent beginner's guide to the R syntax and data structures](https://hbctraining.github.io/Intro-to-R/lessons/02_introR-syntax-and-data-structures.html).
 
 ## Tidy Data Principles
 Often, the data we have as part of routine surveillance activities may not be the version ready for any type of statistical analysis. This raw data MUST be processed into tidy data. At the basic level, tidy data MUST HAVE:
