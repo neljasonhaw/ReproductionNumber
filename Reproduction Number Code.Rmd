@@ -1,7 +1,7 @@
 ---
 title: "Reproduction Number Code"
 author: "Created by Nel Jason Haw"
-date: "Last updated November 14, 2020"
+date: "Last updated December 14, 2020"
 output:
   prettydoc::html_pretty:
     theme: cayman
