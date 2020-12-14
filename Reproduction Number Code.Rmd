@@ -25,7 +25,7 @@ Before starting in this page, please visit the [**README file**](https://neljaso
 # Getting Ready
 
 ## Downloading dummy data (if you wanna follow along completely)
-The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, Go to the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `Code` then click `Download ZIP`. Unzip and look for the file name `linelist.csv`. 
+The rest of this guide uses dummy data. If you want to recreate all of the analyses using the dummy data, visit the [**Github repository here**](https://github.com/neljasonhaw/ReproductionNumber). Click on the green button `Code` then click `Download ZIP`. Unzip and look for the file name `linelist.csv`. 
 
 There's also an R script file called `ReproductionNumber.R`. That R script file contains all the codes in this guide. You may open that as you follow along. All of the other files are not relevant for the guide or are output files that will be generated as part of the analysis.
 
@@ -34,10 +34,10 @@ While the files may usually be found in your Downloads folder, move it to a new 
 <br>
 
 ## Creating an RStudio project
-1. Open RStudio. On the menu bar, click `File` > `New Project...`
-2. The `New Project Wizard` dialog box opens. Click on `Existing Directory`. 
-3. Under `Project working directory`, click `Browse...` and locate the folder of the working directory.
-4. Click `Create Project.` At this point, you have created a new project file (.Rproj) as well as set the working directory.
+1. Open RStudio. On the menu bar, select `File` > `New Project...`
+2. The `New Project Wizard` dialog box opens. select `Existing Directory`. 
+3. Under `Project working directory`, select `Browse...` and locate the folder of the working directory.
+4. Select `Create Project.` At this point, you have created a new project file (.Rproj) as well as set the working directory.
 5. Create a new R script file using the keyboard shortcut `Ctrl-Shift-N` or going to `File` > `New File` > `R Script` or clicking on the New File button on the topmost left corner right below the menu bar then clicking `R Script`. The left side of the environment should split into two - with the script file found on the upper left side. The script file is similar to a do file for those who are familiar with Stata. Ideally, we should be saving all our code in a script file in case we need to redo or repeat analyses so that all we have to do is to run the script rather than coding everything from scratch again.
 5. Save the script file every now and then. Give it a name. In the repository, this is named `ReproductionNumber.R`. Open that script file if you just want to run the code.
 
@@ -53,9 +53,9 @@ library(incidence)      # Generating incidence tables
 library(writexl)        # Export to Excel spreadsheet
 ```
 
-You can opt to skip the characters beginning from the # sign - Anything written with the # sign are comments. I would recommend you keeping them so that you won't forget what each line of code means.
+You can opt to skip the characters beginning from the `#` sign - Anything written with the `#` sign are comments. I would recommend you keeping them so that you won't forget what each line of code means.
 
-Now, highlight the five lines of code on your script file, then click the `Run` button on the upper right portion of the `Script` window. Alternatively, you can also use the keyboard shortcut `Ctrl-Enter` to run the code. The codes should appear on the `Console` window on the lower left. Moving forward, whenever we want to run a chunk of code one at a time, we highlight the code we want to run, then we either click the `Run` button or enter `Ctrl-Enter`. Stata users will find this workflow very familiar, as this is the same that's done with do files.
+Now, highlight the five lines of code on your script file, then click the `Run` button on the upper right portion of the `Script` window. Alternatively, you can also use the keyboard shortcut `Ctrl-Enter` to run the code. The codes should appear on the `Console` window on the lower left. Moving forward, whenever we want to run a chunk of code one at a time, we highlight the code we want to run, then we either click the `Run` button or enter `Ctrl-Enter`. Stata users will find this workflow very familiar, as this is the same that is done with do files.
 
 <br>
 <br>
@@ -63,7 +63,7 @@ Now, highlight the five lines of code on your script file, then click the `Run` 
 # Data Preparation
 
 ## Tidy data: linelist
-Before starting to code, make sure that the tidy data version of your surveillance data is already available on your working directory. For those who want to follow along with dummy data, we have already done this. For those who want to use your own line list of cases, make sure you have done it at this point and rename the file as `linelist.csv` so that you don't have to change anything in the codes below.
+Before starting to code, make sure that the tidy data version of your surveillance data is already available on your working directory. For those who want to follow along with dummy data, we have already done this. For those who want to use your own line list of cases, make sure you have done it at this point and rename the file as `linelist.csv` so that you do not have to change anything in the codes below.
 
 **IMPORTANT: when you are exporting your own surveillance data to comma-separated values (CSV) format from Excel, make sure to choose the file type option "CSV (Macintosh)." The other CSV file types do not render properly in R.**
 
@@ -79,7 +79,7 @@ The line list, at the minimum, should contain the following columns:
 
 In line with tidy data principles, make sure that any categorical variable has clean values (no typographical errors, no different versions of the same category), and that all date variables have a uniform format. **I recommend using the date format "YYYY-MM-DD".**
 
-For those using their own data, I would recommend to rename your columns to the column names above so that you don't have to change anything in the codes below.
+For those using their own data, I would recommend to rename your columns to the column names above so that you do not have to change anything in the codes below.
 
 First, let's take a look at the dummy data quickly. Run the following lines of code and a table showing the first six rows should appear on the `Console`:
 ```{r head_linelistcsv}
@@ -96,7 +96,7 @@ Run the following code. Note that R does not mind when you break commands into m
 linelist$DateOnset <- as.Date(linelist$DateOnset, "%Y-%m-%d")     
 linelist$DateTested <- as.Date(linelist$DateTested, "%Y-%m-%d") 
 linelist$DateReported <- as.Date(linelist$DateReported, "%Y-%m-%d")
-# Imputation algorithm
+# Imputation algorithm - hypothetical, replace based on your context
 linelist <- linelist %>% 
   mutate(DateOnset_imputed = case_when(is.na(DateOnset) & !is.na(DateTested) ~ DateTested - 2,
                                        is.na(DateOnset) & is.na(DateTested) ~ DateReported - 4,
@@ -150,7 +150,7 @@ A serial interval distribution must be declared beforehand. You may estimate ser
 
 This guide will not teach you how to model a serial interval distribution.
 
-For this guide, we will use a hypothetical example from hypothetical literature where the serial interval was determined to have a Weibull distribution, with mean 7.0 days and standard deviation 5.5 days.
+For this guide, we will use a hypothetical example from one of my research studies estimating epidemiological parameters at the start of the COVID-19 pandemic in the Philippines ([doi: 10.1017/S0950268820002137](https://www.cambridge.org/core/journals/epidemiology-and-infection/article/epidemiological-profile-and-transmission-dynamics-of-covid19-in-the-philippines/FF71A51A25F004AC59885AFA4C88C48B)). In that study, we used a serial interval for COVID-19 with a Weibull distribution, with mean 7.0 days and standard deviation 5.5 days.
 
 Run the following code to store the serial interval distribution in a list called `mGT`
 ```{r serialinterval}
@@ -184,12 +184,13 @@ We then restrict our analyses to these dates into a new data file called `incide
 incidencetable_subset <- incidencetable %>% 
   filter(DateOnset_imputed >= as.Date("2020-06-15") & DateOnset_imputed <= as.Date("2020-11-01"))
 # %>% is a pipe filter in the dplyr package that makes coding more readable
+# Replace the dates according to your epidemic curve
 ```
 
 <br>
 
 ## Plotting reproduction number curve
-And finally, we are ready to calculate the reproduction number. You will store the results in an object called `Rt`.
+And finally, we are ready to calculate the reproduction number. We will store the results in an object called `Rt`.
 
 Note that the `R0` package has multiple methods available, but for this guide, we will use the [Wallinga and Teunis (2004) method](https://academic.oup.com/aje/article/160/6/509/79472).
 
@@ -225,11 +226,16 @@ rt_plot <- ggplot(Rt_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", 
     # Plot the line with point estimates, custom colors
                   geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
     # Plot the 95% confidence intervals, custom colors
-                  xlab("Date of symptom onset (imputed)") + ylab("Reproduction number")
+                  xlab("Date of symptom onset (imputed)") + ylab("Reproduction number") +
+    # Renaming x and y axis labels
+                  geom_hline(yintercept = 1) +
+    # Add a horizontal line indicating Rt = 1
+                  ylim(c(0,5))
+    # Limit the scale of the y-axis
 rt_plot
 ```
 
-The graph has the point estimates as solid lines and the 95% confidence intervals (CI) as bands surrounding the solid lines.
+The graph has the point estimates as solid lines and the 95% confidence intervals (CI) as bands surrounding the solid lines. There is also a horizontal line indicating Rt = 1, and the scale of the y-axis has been limited from 0 to 5.
 
 This guide will not teach you how to interpret this curve, but note the following considerations:
 
@@ -304,9 +310,10 @@ You may also plot the reproduction number curve. By default you can just use the
 rt_C_plot <- 
   ggplot(Rt_C_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", lwd = 2) +   
          geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
-         xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
+         xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number") +
+         geom_hline(yintercept = 1) + ylim(c(0,5))
 rt_C_plot
-ggsave(file="rt_plot_C.png", rt_plot, width = 160, height = 90, unit = "mm")
+ggsave(file="rt_plot_C.png", rt_C_plot, width = 160, height = 90, unit = "mm")
 ```
 <br>
 

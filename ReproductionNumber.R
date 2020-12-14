@@ -71,6 +71,7 @@ incidencetable_subset <- incidencetable %>%
 ## Estimate reproduction number
 Rt <- estimate.R(epid = incidencetable_subset$Count, t = incidencetable_subset$Date, 
                  GT=mGT, method="TD", begin="2020-06-15", end="2020-11-01")
+# Replace the dates according to your epidemic curve
 # epid declares the incidence counts
 # t declares the corresponding dates
 # GT declares the serial interval distribution curve generated earlier
@@ -104,8 +105,14 @@ linelist_C <- linelist %>% filter(Municipality == "Municipality C")
 ggplot(linelist_C, aes(x = DateOnset_imputed)) +                  # Call data
   geom_histogram(binwidth = 7, fill = "#156A86", color = "black") +  
   # Indicate visualizaiton is histogram with bin width 7 days, custom colors
-  xlab("Date of Symptom Onset (imputed)") + ylab("Number of Cases")
+  # Plot the 95% confidence intervals, custom colors
+  xlab("Date of symptom onset (imputed)") + ylab("Reproduction number") +
   # Renaming x and y axis labels
+  geom_hline(yintercept = 1) +
+  # Add a horizontal line indicating Rt = 1
+  ylim(c(0,5))
+  # Limit the scale of the y-axis
+
 # A reasonable time period is between June 15 and October 25 based on the curve
 # Filter linelist by chosen dates
 linelist_C_subset <- 
@@ -138,6 +145,7 @@ write_xlsx(Rt_C_table, "Rt_C_table.xlsx")
 # Plot Rt results and save as image
 rt_C_plot <- ggplot(Rt_C_table, aes(x = date, y = Rt)) + geom_line(color="#156A86", lwd = 2) +   
   geom_ribbon(aes(ymax = upperCI, ymin = lowerCI), fill="#156A86", alpha = 0.2) + 
-  xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number")
+  xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number") +
+  geom_hline(yintercept = 1) + ylim(c(0,5))
 rt_C_plot
 ggsave(file="rt_plot_C.png", rt_plot, width = 160, height = 90, unit = "mm")
