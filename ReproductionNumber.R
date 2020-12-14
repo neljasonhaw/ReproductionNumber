@@ -148,4 +148,4 @@ rt_C_plot <- ggplot(Rt_C_table, aes(x = date, y = Rt)) + geom_line(color="#156A8
   xlab("Date of symptom onset (imputed)") + ylab("Time-dependent reproduction number") +
   geom_hline(yintercept = 1) + ylim(c(0,5))
 rt_C_plot
-ggsave(file="rt_plot_C.png", rt_plot, width = 160, height = 90, unit = "mm")
+ggsave(file="rt_plot_C.png", rt_C_plot, width = 160, height = 90, unit = "mm")
